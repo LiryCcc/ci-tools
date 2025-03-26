@@ -13,11 +13,9 @@
     "lint": "pnpm lint:eslint && pnpm lint:prettier",
     "lint:eslint": "eslint .",
     "lint:prettier": "prettier --check .",
-    "test": "jest",
-    "lint-staged":"lint-staged"
+    "test": "jest"
   },
   "dependencies": {
-    "husky": "^9.1.7",
     "lodash-es": "^4.17.21"
   },
   "devDependencies": {
@@ -32,7 +30,6 @@
     "eslint": "^9.23.0",
     "globals": "^16.0.0",
     "jest": "^29.7.0",
-    "lint-staged": "^15.5.0",
     "prettier": "3.5.3",
     "prettier-plugin-organize-imports": "^4.1.0",
     "prettier-plugin-packagejson": "^2.5.10",
