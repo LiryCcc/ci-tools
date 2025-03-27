@@ -1,0 +1,39 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    tags:
+      - 'v*' # 当推送带v开头的标签时触发workflow
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22' # 选择合适的Node.js版本
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10 # 选择合适的PNPM版本
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run lint
+        run: pnpm lint
+
+      - name: Build project
+        run: pnpm build
+
+      - name: Create zip archive
+        run: pnpm compress
+
+      - name: Create Release
+        run: echo release
