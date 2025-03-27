@@ -27,7 +27,7 @@ const rollupConfig = defineConfig({
   context: undefined,
   moduleContext: undefined,
   output: {
-    format: 'iife',
+    format: 'esm',
     dir: 'dist'
   },
   plugins: [
