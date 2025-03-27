@@ -6,7 +6,7 @@ on:
       - 'v*' # 当推送带v开头的标签时触发workflow
 
 jobs:
-  build-and-release:
+  install-deps:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,13 +25,24 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
+  lint:
+    runs-on: ubuntu-latest
 
+    steps:
       - name: Run lint
         run: pnpm lint
 
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
       - name: Build project
         run: pnpm build
 
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
       - name: Create zip archive
         run: pnpm compress
 
