@@ -8,7 +8,6 @@ on:
 jobs:
   install-deps:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -17,6 +16,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '22' # 选择合适的Node.js版本
+          cache: 'pnpm'
 
       - name: Setup PNPM
         uses: pnpm/action-setup@v2
@@ -25,26 +25,115 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-  lint:
-    runs-on: ubuntu-latest
 
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            .pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+  lint:
+    needs: install-deps
+    runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10
+
+      - name: Restore dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            .pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+
       - name: Run lint
         run: pnpm lint
 
   build:
+    needs: lint
     runs-on: ubuntu-latest
-
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10
+
+      - name: Restore dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            .pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+
       - name: Build project
         run: pnpm build
 
-  release:
-    runs-on: ubuntu-latest
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-files
+          path: dist/ # 假设构建输出目录为dist，根据实际情况调整
 
+  release:
+    needs: build
+    runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10
+
+      - name: Restore dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            .pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-files
+          path: dist
+
       - name: Create zip archive
         run: pnpm compress
 
       - name: Create Release
-        run: echo release
+        run: pnpm release

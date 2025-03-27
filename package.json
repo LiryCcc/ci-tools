@@ -14,6 +14,7 @@
     "lint": "pnpm lint:eslint && pnpm lint:prettier",
     "lint:eslint": "eslint .",
     "lint:prettier": "prettier --check .",
+    "release": "node ./dist/release.js",
     "test": "jest",
     "postversion": "git push origin --tags && git push origin --all"
   },
