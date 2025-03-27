@@ -15,7 +15,7 @@
     "lint:eslint": "eslint .",
     "lint:prettier": "prettier --check .",
     "test": "jest",
-    "postversion": "git push origin --tags"
+    "postversion": "git push origin --tags && git push origin --all"
   },
   "dependencies": {
     "lodash-es": "^4.17.21",
